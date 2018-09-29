@@ -109,7 +109,7 @@ while running:  # Game loop
     p2.bounce(screen)
 
     # plot the closest position of p1 to p2 in case of collision.
-    ParticleManager.collision_prediction(p1, p2, screen, True)
+    ParticleManager.collision_prediction(p1, p2, screen, True, False)
 
     p1.display(screen)
     p2.display(screen)

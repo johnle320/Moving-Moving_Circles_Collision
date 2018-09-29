@@ -63,7 +63,7 @@ class ParticleManager(object):
         return False
 
     @staticmethod
-    def collision_prediction(p1, p2, screen, sandwich):
+    def collision_prediction(p1, p2, screen, sandwich, motion_analyze):
         # Decarte velocity of p1:
         (v1x, v1y) = (p1.speed * math.cos(p1.angle), p1.speed * math.sin(p1.angle))
         # Decarte velocity of p2:
@@ -148,17 +148,20 @@ class ParticleManager(object):
                     # draw as if p1 is at the collision point
                     p = Particle((p1_touch_x, p1_touch_y), p1.radius, (0, 0), p1.thickness)
                     p.display(screen)
-
-                print("gonna hit")
+                if motion_analyze:
+                    print("gonna hit")
                 return True
             else:
-                # print("path is clear")
+                if motion_analyze:
+                    print("path is clear")
                 return False
         elif not toward_ea_other:
-            # print("Further away")
+            if motion_analyze:
+                print("Further away")
             return False
         else: # p1 is not moving
-            # print("not moving")
+            if motion_analyze:
+                print("not moving")
             return False
 
     @staticmethod
