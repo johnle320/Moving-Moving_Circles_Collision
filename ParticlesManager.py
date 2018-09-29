@@ -63,7 +63,7 @@ class ParticleManager(object):
         return False
 
     @staticmethod
-    def collision_prediction(p1, p2, screen):
+    def collision_prediction(p1, p2, screen, sandwich):
         # Decarte velocity of p1:
         (v1x, v1y) = (p1.speed * math.cos(p1.angle), p1.speed * math.sin(p1.angle))
         # Decarte velocity of p2:
@@ -71,9 +71,10 @@ class ParticleManager(object):
 
         # Relative velocity of p1 to p2:
         (v1x, v1y) = (v1x - v2x, v1y - v2y)
-        # Draw it
-        pygame.draw.lines(screen, [50, 255, 50], False,
-                          [(p1.x, p1.y), (p1.x + pow(10, 2) * v1x, p1.y + pow(10, 2) * v1y), 2])
+        if sandwich:
+            # Draw it
+            pygame.draw.lines(screen, [50, 255, 50], False,
+                              [(p1.x, p1.y), (p1.x + pow(10, 2) * v1x, p1.y + pow(10, 2) * v1y), 2])
 
         # square magnitude of v1:
         v1_mag_sq = v1x * v1x + v1y * v1y
@@ -91,21 +92,27 @@ class ParticleManager(object):
         # check if p1 is coming toward p2:
         toward_ea_other = (v1x * p1p2_x + v1y * p1p2_y) > 0
 
-        if not (n1x == 0 and n1y == 0) and toward_ea_other:
+        if not (n1x == 0 and n1y == 0) and toward_ea_other and not v1_mag_sq == 0:
             # magnitude of v1 We calculate vector u1 here so to save
             # the computer's resources.
             v1_mag = math.sqrt(v1_mag_sq)
             # Directional unit vector in the moving direction of p1.
             (u1x, u1y) = (x / v1_mag for x in (v1x, v1y))
 
-            # Draw projecting line of the relative velocity
-            (uN1x, uN1y) = (u1y, -u1x)
-            (k1x, k1y) = (p1.x + uN1x * p1.radius, p1.y + uN1y * p1.radius)
-            pygame.draw.lines(screen, [50, 255, 50], False,
-                              [(k1x, k1y), (k1x + pow(10, 3) * v1x, k1y + pow(10, 3) * v1y), 2])
-            (t1x, t1y) = (p1.x - uN1x * p1.radius, p1.y - uN1y * p1.radius)
-            pygame.draw.lines(screen, [50, 255, 50], False,
-                              [(t1x, t1y), (t1x + pow(10, 3) * v1x, t1y + pow(10, 3) * v1y), 2])
+            if sandwich:
+
+                # Draw connecting lines between 2 circles
+                pygame.draw.lines(screen, [255, 255, 255], False, [(p1.x, p1.y), (p2.x, p2.y)], 1)
+
+                # Draw projecting line of the relative velocity
+                (uN1x, uN1y) = (u1y, -u1x)
+                (k1x, k1y) = (p1.x + uN1x * p1.radius, p1.y + uN1y * p1.radius)
+                pygame.draw.lines(screen, [50, 255, 50], False,
+                                  [(k1x, k1y), (k1x + pow(10, 3) * v1x, k1y + pow(10, 3) * v1y), 2])
+                (t1x, t1y) = (p1.x - uN1x * p1.radius, p1.y - uN1y * p1.radius)
+                pygame.draw.lines(screen, [50, 255, 50], False,
+                                  [(t1x, t1y), (t1x + pow(10, 3) * v1x, t1y + pow(10, 3) * v1y), 2])
+
             # find the closest point of p1 to p2:
             # 1. find proj(p1p2) onto n1:
             scale3 = (p1p2_x * n1x + p1p2_y * n1y) / n1_mag_sq
@@ -130,24 +137,29 @@ class ParticleManager(object):
                 ratio = p1.radius / (p1.radius + p2.radius)
                 (cld_p_x, cld_p_y) = (p1p2_touch_x * ratio + p1_touch_x, p1p2_touch_y * ratio + p1_touch_y)
 
-                # draw the position of p1 at collision
-                pygame.draw.circle(screen, [255, 255, 255], (int(p1_touch_x), int(p1_touch_y)), 4, 0)
-                # draw the touching point
-                pygame.draw.circle(screen, [255, 100, 100], (int(cld_p_x), int(cld_p_y)), 4, 0)
-                p = Particle((p1_touch_x, p1_touch_y), p1.radius, (0, 0), p1.thickness)
-                p.display(screen)
+                if sandwich:
+                    # draw the position of p1 at collision
+                    pygame.draw.circle(screen, [255, 255, 255], (int(p1_touch_x), int(p1_touch_y)), 4, 0)
+
+                # draw the collision point
+                pygame.draw.circle(screen, [randint(0, 255), 100, 100], (int(cld_p_x), int(cld_p_y)), 4, 0)
+
+                if sandwich:
+                    # draw as if p1 is at the collision point
+                    p = Particle((p1_touch_x, p1_touch_y), p1.radius, (0, 0), p1.thickness)
+                    p.display(screen)
 
                 print("gonna hit")
-                return (cp1_x, cp1_y), (p1_touch_x, p1_touch_y), (cld_p_x, cld_p_y)
+                return True
             else:
-                print("path is clear")
-                return None, None, None
+                # print("path is clear")
+                return False
         elif not toward_ea_other:
-            print("Further away")
-            return None, None, None
+            # print("Further away")
+            return False
         else: # p1 is not moving
-            print("not moving")
-            return None, None, None
+            # print("not moving")
+            return False
 
     @staticmethod
     def box_collision(p1, p2):

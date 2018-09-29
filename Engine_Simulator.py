@@ -8,7 +8,7 @@ from DashPoint import Point
 
 pygame.init()
 
-[width, height] = [400, 700]
+[width, height] = [800, 700]
 screen = pygame.display.set_mode((width, height))
 
 background_color = [0, 0, 0]
@@ -26,9 +26,9 @@ particles_manager = ParticleManager()
 # generate a group of particles
 particles_manager.generate_particles(0)
 r1 = 80
-p1 = Particle((r1 + 5, r1 + 5), r1, (1, uniform(math.pi / 12, math.pi / 3)), 1)
+p1 = Particle((r1 + 5, r1 + 5), r1, (1, math.pi / 3), 2)
 r2 = 110
-p2 = Particle((width - r2 - 5, height - r2 - 5), r2, (1, math.pi / 12 - math.pi), 1)
+p2 = Particle((width - r2 - 5, height - r2 - 5), r2, (2, math.pi / 3 - math.pi), 2)
 particles_manager.add(p1)
 particles_manager.add(p2)
 
@@ -102,7 +102,6 @@ while running:  # Game loop
 
     # a line connecting 2 circles.
     # Point.draw_dashed_line(screen, [255, 255, 255], (p1.x, p1.y), (p2.x, p2.y), 1, 10 )
-    pygame.draw.lines(screen, [255, 255, 255], False, [(p1.x, p1.y), (p2.x, p2.y)], 1)
 
     p1.move(screen)
     p2.move(screen)
@@ -110,7 +109,7 @@ while running:  # Game loop
     p2.bounce(screen)
 
     # plot the closest position of p1 to p2 in case of collision.
-    ParticleManager.collision_prediction(p1, p2, screen)
+    ParticleManager.collision_prediction(p1, p2, screen, True)
 
     p1.display(screen)
     p2.display(screen)
@@ -126,5 +125,5 @@ while running:  # Game loop
     #     p.display(screen) # display the particle on the screen
 
     pygame.display.update()
-    clock.tick(10)
+    clock.tick(100)
 
