@@ -125,5 +125,5 @@ while running:  # Game loop
     #     p.display(screen) # display the particle on the screen
 
     pygame.display.update()
-    clock.tick(100)
+    clock.tick(20)
 

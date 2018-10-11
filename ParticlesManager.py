@@ -79,8 +79,6 @@ class ParticleManager(object):
         # square magnitude of v1:
         v1_mag_sq = v1x * v1x + v1y * v1y
 
-
-
         # calculate the normal vector of the moving line of p1
         (n1x, n1y) = (v1y, -v1x)
         # square magnitude of n1:
@@ -108,7 +106,7 @@ class ParticleManager(object):
                 (uN1x, uN1y) = (u1y, -u1x)
                 (k1x, k1y) = (p1.x + uN1x * p1.radius, p1.y + uN1y * p1.radius)
                 pygame.draw.lines(screen, [50, 255, 50], False,
-                                  [(k1x, k1y), (k1x + pow(10, 3) * v1x, k1y + pow(10, 3) * v1y), 2])
+                                  [(k1x, k1y), (k1x + pow(10, 2) * v1x, k1y + pow(10, 2) * v1y), 2])
                 (t1x, t1y) = (p1.x - uN1x * p1.radius, p1.y - uN1y * p1.radius)
                 pygame.draw.lines(screen, [50, 255, 50], False,
                                   [(t1x, t1y), (t1x + pow(10, 3) * v1x, t1y + pow(10, 3) * v1y), 2])
