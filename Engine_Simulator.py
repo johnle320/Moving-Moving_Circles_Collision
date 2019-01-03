@@ -3,7 +3,7 @@ from random import uniform
 import math
 
 from Particle import Particle
-from ParticleManager import ParticleManager
+from ParticlesManager import ParticlesManager
 from DashPoint import Point
 
 pygame.init()
@@ -21,7 +21,7 @@ pygame.display.flip()
 
 # Create an instance of Particles_Management.
 # A particles_manager hold responsible to generates and manage a list of particles_manager
-particles_manager = ParticleManager()
+particles_manager = ParticlesManager()
 
 # generate a group of particles
 particles_manager.generate_particles(0)
@@ -109,7 +109,7 @@ while running:  # Game loop
     p2.wall_bounce(screen)
 
     # plot the closest position of p1 to p2 in case of collision.
-    ParticleManager.collision_prediction(p1, p2, screen, graphical_output=True, collision_alert=False)
+    ParticlesManager.collision_prediction(p1, p2, screen, graphical_output=True, collision_alert=False)
 
     p1.display(screen)
     p2.display(screen)

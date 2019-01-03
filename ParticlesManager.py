@@ -6,7 +6,7 @@ import math
 import pygame
 
 
-class ParticleManager(object):
+class ParticlesManager(object):
 
     def __init__(self):
         self.particles_list = []
@@ -51,7 +51,7 @@ class ParticleManager(object):
 
     @staticmethod
     def round_collision_detection(p1, p2):
-        if ParticleManager.box_collision_detection(p1, p2):  # (fast check)
+        if ParticlesManager.box_collision_detection(p1, p2):  # (fast check)
 
             # thorough check: moderately cost computer resource
             dx = p1.x - p2.x
@@ -183,8 +183,9 @@ class ParticleManager(object):
 
         # check if the 2 balls will collide in the next iteration?
         # If yes, then perform the reflection in the screen by update speed and angle of the balls
-        if ParticleManager.round_collision_prediction(p11, p22):
+        if ParticlesManager.round_collision_detection(p11, p22):
             # deflect p1 and p2
+            print('will collide')
             return True
 
         return False
