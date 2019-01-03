@@ -1,7 +1,6 @@
 from random import randint
 from random import uniform
 from Particle import Particle
-from Engine_Simulator import screen
 import math
 import pygame
 
@@ -174,10 +173,10 @@ class ParticlesManager(object):
 
     # return: True/False
     @staticmethod
-    def will_collide_next_frame(p1, p2):
+    def will_collide_next_frame(p1, p2, screen):
 
-        p11 = Particle((p1.x, p1.y), p1.radius, p1.velocity)
-        p22 = Particle((p2.x, p2.y), p2.radius, p2.velocity)
+        p11 = Particle((p1.x, p1.y), p1.radius, (p1.speed, p1.angle))
+        p22 = Particle((p2.x, p2.y), p2.radius, (p2.speed, p2.angle))
         p11.move(screen)
         p22.move(screen)
 
