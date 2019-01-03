@@ -3,7 +3,7 @@ from random import uniform
 import math
 
 from Particle import Particle
-from ParticlesManager import ParticleManager
+from ParticleManager import ParticleManager
 from DashPoint import Point
 
 pygame.init()
