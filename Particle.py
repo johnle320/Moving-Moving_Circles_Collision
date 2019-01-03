@@ -8,8 +8,8 @@ class Particle(object):
     gravity = (math.pi / 2, 0.5)
     elastic = 0.7
 
-    def __init__(self, position, radius, velocity, thickness):
-        self.x, self.y = position
+    def __init__(self, coordinate, radius, velocity, thickness=4):
+        self.x, self.y = coordinate
         self.radius = radius
         self.mass_density = 100
         self.mass = 4 / 3 * math.pi * math.pow(self.radius, 3) * self.mass_density
@@ -40,8 +40,8 @@ class Particle(object):
                 self.angle, self.speed = self.add_vector((self.angle, self.speed), Particle.gravity)
 
             # update position
-            dx = math.cos(self.angle) * self.speed  # vx * t
-            dy = math.sin(self.angle) * self.speed  # vy * t
+            dx = math.cos(self.angle) * self.speed  # dx = vx * t
+            dy = math.sin(self.angle) * self.speed  # dy = vy * t
 
             self.x += dx  # x = x0 + vx * t
             self.y += dy  # y = y0 + vy * t
@@ -59,7 +59,7 @@ class Particle(object):
             self.speed = math.hypot(dx, dy) * 0.5
             self.angle = math.atan2(dy, dx)
 
-    def bounce(self, screen):
+    def wall_bounce(self, screen):
         width = screen.get_width()
         height = screen.get_height()
 

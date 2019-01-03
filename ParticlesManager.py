@@ -1,6 +1,7 @@
 from random import randint
 from random import uniform
 from Particle import Particle
+from Engine_Simulator import screen
 import math
 import pygame
 
@@ -18,7 +19,7 @@ class ParticleManager(object):
             radius = randint(40, 50)
             speed = uniform(0, 1)
             angle = uniform(0, 2 * math.pi)
-            p = Particle((x, y), radius, (2, angle), 4)
+            p = Particle((x, y), radius, (2, angle))
             self.particles_list.append(p)
 
         return self.particles_list
@@ -49,21 +50,23 @@ class ParticleManager(object):
         return None # if no selected particle, return NONE
 
     @staticmethod
-    def collision_check(p1, p2):
-        if ParticleManager.box_collision(p1, p2):  # fast check
+    def round_collision_detection(p1, p2):
+        if ParticleManager.box_collision_detection(p1, p2):  # (fast check)
 
             # thorough check: moderately cost computer resource
             dx = p1.x - p2.x
             dy = p1.y - p2.y
             d_sq = pow(dx, 2) + pow(dy, 2)
 
-            if d_sq <= pow(p1.radius + p2.radius, 2):  # avoid using square root to speed up
+            # if they intercede
+            if d_sq <= pow(p1.radius + p2.radius, 2):  # (avoid using square root to speed up)
                 print('bang')
+                return True
 
         return False
 
     @staticmethod
-    def collision_prediction(p1, p2, screen, sandwich, motion_analyze):
+    def collision_prediction(p1, p2, screen, graphical_output, collision_alert):
         # Decarte velocity of p1:
         (v1x, v1y) = (p1.speed * math.cos(p1.angle), p1.speed * math.sin(p1.angle))
         # Decarte velocity of p2:
@@ -71,7 +74,7 @@ class ParticleManager(object):
 
         # Relative velocity of p1 to p2:
         (v1x, v1y) = (v1x - v2x, v1y - v2y)
-        if sandwich:
+        if graphical_output:
             # Draw it
             pygame.draw.lines(screen, [50, 255, 50], False,
                               [(p1.x, p1.y), (p1.x + pow(10, 2) * v1x, p1.y + pow(10, 2) * v1y), 2])
@@ -97,7 +100,8 @@ class ParticleManager(object):
             # Directional unit vector in the moving direction of p1.
             (u1x, u1y) = (x / v1_mag for x in (v1x, v1y))
 
-            if sandwich:
+            # draw the lines indicating the motion of the ball
+            if graphical_output:
 
                 # Draw connecting lines between 2 circles
                 pygame.draw.lines(screen, [255, 255, 255], False, [(p1.x, p1.y), (p2.x, p2.y)], 1)
@@ -135,35 +139,53 @@ class ParticleManager(object):
                 ratio = p1.radius / (p1.radius + p2.radius)
                 (cld_p_x, cld_p_y) = (p1p2_touch_x * ratio + p1_touch_x, p1p2_touch_y * ratio + p1_touch_y)
 
-                if sandwich:
+                if graphical_output:
                     # draw the position of p1 at collision
                     pygame.draw.circle(screen, [255, 255, 255], (int(p1_touch_x), int(p1_touch_y)), 4, 0)
 
                 # draw the collision point
                 pygame.draw.circle(screen, [randint(0, 255), 100, 100], (int(cld_p_x), int(cld_p_y)), 4, 0)
 
-                if sandwich:
+                if graphical_output:
                     # draw as if p1 is at the collision point
                     p = Particle((p1_touch_x, p1_touch_y), p1.radius, (0, 0), p1.thickness)
                     p.display(screen)
-                if motion_analyze:
+                if collision_alert:
                     print("gonna hit")
                 return True
             else:
-                if motion_analyze:
+                if collision_alert:
                     print("path is clear")
                 return False
         elif not toward_ea_other:
-            if motion_analyze:
+            if collision_alert:
                 print("Further away")
             return False
         else: # p1 is not moving
-            if motion_analyze:
+            if collision_alert:
                 print("not moving")
             return False
 
     @staticmethod
-    def box_collision(p1, p2):
+    def box_collision_detection(p1, p2):
         a1 = p1.radius * 2
         a2 = p2.radius * 2
         return abs(p1.x - p2.x) <= a1 + a2 and abs(p1.y - p2.y) <= a1 + a2
+
+    # return: True/False
+    @staticmethod
+    def will_collide_next_frame(p1, p2):
+
+        p11 = Particle((p1.x, p1.y), p1.radius, p1.velocity)
+        p22 = Particle((p2.x, p2.y), p2.radius, p2.velocity)
+        p11.move(screen)
+        p22.move(screen)
+
+        # check if the 2 balls will collide in the next iteration?
+        # If yes, then perform the reflection in the screen by update speed and angle of the balls
+        if ParticleManager.round_collision_prediction(p11, p22):
+            # deflect p1 and p2
+            return True
+
+        return False
+
