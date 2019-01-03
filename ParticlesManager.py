@@ -188,4 +188,3 @@ class ParticlesManager(object):
             return True
 
         return False
-
