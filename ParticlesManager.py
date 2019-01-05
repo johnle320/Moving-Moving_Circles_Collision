@@ -182,7 +182,9 @@ class ParticlesManager(object):
 
         # check if the 2 balls will collide in the next iteration?
         # If yes, then perform the reflection in the screen by update speed and angle of the balls
-        if ParticlesManager.round_collision_detection(p11, p22):
+        cond1 = ParticlesManager.round_collision_detection(p1, p2)
+        cond2 = ParticlesManager.round_collision_detection(p11, p22)
+        if not cond1 and cond2:
             # deflect p1 and p2
             print('will collide')
             return True
