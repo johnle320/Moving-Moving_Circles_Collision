@@ -15,7 +15,7 @@ class ParticlesManager(object):
         for n in range(num):
             x = uniform(400, 600)
             y = uniform(200, 400)
-            radius = randint(40, 50)
+            radius = randint(10, 20)
             speed = uniform(0, 1)
             angle = uniform(0, 2 * math.pi)
             p = Particle((x, y), radius, (2, angle))
@@ -184,8 +184,34 @@ class ParticlesManager(object):
         # If yes, then perform the reflection in the screen by update speed and angle of the balls
         cond1 = ParticlesManager.round_collision_detection(p1, p2)
         cond2 = ParticlesManager.round_collision_detection(p11, p22)
-        if not cond1 and cond2:
+        if cond2:
             # deflect p1 and p2
+
+            # polar to cartesian coordinate
+            vx1 = p1.speed * math.cos(p1.angle)
+            vy1 = p1.speed * math.sin(p1.angle)
+            vx2 = p2.speed * math.cos(p2.angle)
+            vy2 = p2.speed * math.sin(p2.angle)
+
+            # swap in x direction
+            ux1 = vx2
+            uy1 = vy2
+
+            # swap in y direction
+            ux2 = vx1
+            uy2 = vy1
+
+            # cartesian to polar coordinate
+            p1.speed = math.hypot(ux1, uy1)
+            p2.speed = math.hypot(ux2, uy2)
+            p1.angle = math.atan2(uy1, ux1)
+            p2.angle = math.atan2(uy2, ux2)
+
+            # anti sticking
+            for i in [1, 2, 3]:
+                p1.move
+                p2.move
+
             print('will collide')
             return True
 
