@@ -6,7 +6,7 @@ import math
 class Particle(object):
     gravity_switch = True
     gravity = (math.pi / 2, 0.5)
-    elastic = 0.7
+    elastic = 0.8
 
     def __init__(self, coordinate, radius, velocity, thickness=4):
         self.x, self.y = coordinate
